@@ -22,11 +22,6 @@
       "kind": "uups"
     },
     {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0x139630f7ae5001adfbec64b4abead84607a692b3ffc02bc8a6de43c0aa6176cd",
-      "kind": "uups"
-    },
-    {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       "txHash": "0xcfc57987a2345125a777453fe1e9baebef3a305ef32a01074f89db76b61e69e0",
       "kind": "uups"
@@ -67,8 +62,13 @@
       "kind": "uups"
     },
     {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "txHash": "0xe9bd66cfbf0fa60800ad033dc4208dd88170219ff54551fae412138b642fd59e",
+      "kind": "uups"
+    },
+    {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x2844bdea6d3b4872dd0ee4305507d81c72b76eee225f2b036f4b4988bc28a647",
+      "txHash": "0x488d5046cbe45470899591e0eb93ee9f2c03c1d47cdd9dc06d77b24528299104",
       "kind": "uups"
     }
   ],
@@ -695,9 +695,9 @@
         }
       }
     },
-    "dbcbc8f6ba2a479c00f357642325097c1e83d4c783cddfb1eb25a017cec09d1d": {
+    "838784f97e369e93077855e3d3c966f2812f071c3f3f06ac67747127a0685721": {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0x72ab1a6468d62b5e1d87fa21121ba9ecf700e773189e10c81dfdcdbcf43ae4dc",
+      "txHash": "0x4d660e8c35eccef96dbb6de82a41f8a118f36893e2853a7d070160ff963f1950",
       "layout": {
         "solcVersion": "0.8.12",
         "storage": [
@@ -883,48 +883,48 @@
             "offset": 0,
             "slot": "501",
             "type": "t_struct(Counter)2871_storage",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:24"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:24"
           },
           {
             "label": "_baseURIString",
             "offset": 0,
             "slot": "502",
             "type": "t_string_storage",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:26"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:26"
           },
           {
             "label": "_metadataTable",
             "offset": 0,
             "slot": "503",
             "type": "t_string_storage",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:27"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:27"
           },
           {
             "label": "_metadataTableId",
             "offset": 0,
             "slot": "504",
             "type": "t_uint256",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:28"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:28"
           },
           {
             "label": "_tablePrefix",
             "offset": 0,
             "slot": "505",
             "type": "t_string_storage",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:29"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:29"
           },
           {
             "label": "_externalURL",
             "offset": 0,
             "slot": "506",
             "type": "t_string_storage",
-            "contract": "CanvasGame",
-            "src": "contracts/CanvasGame.sol:32"
+            "contract": "NebulaNFT",
+            "src": "contracts/NebulaNFT.sol:32"
           }
         ],
         "types": {

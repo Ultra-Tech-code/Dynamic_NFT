@@ -24,7 +24,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // Used for contract verification & post-deploy moves
 export const deployments: { [key: string]: string } = {
-  localhost: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707", // If it's the first deployed contract, this is deterministic
+  localhost: "0x5FbDB2315678afecb367f032d93F642f64180aa3", // If it's the first deployed contract, this is deterministic
   maticmum: "0xEB5865EF3949585324c465eC9ba5C7777f455488", // Update this with your proxy contract deployment
   // And/or, add a different network key
 };
@@ -119,7 +119,7 @@ const config: HardhatUserConfig = {
     },
   },
   proxies: {
-    localhost: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    localhost: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   },
 };
 

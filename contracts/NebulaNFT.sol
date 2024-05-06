@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@tableland/evm/contracts/utils/TablelandDeployments.sol";
 import "@tableland/evm/contracts/utils/SQLHelpers.sol";
 
-contract CanvasGame is
+contract NebulaNFT is
     ERC721URIStorageUpgradeable,
     ERC721HolderUpgradeable,
     OwnableUpgradeable,
@@ -44,7 +44,7 @@ contract CanvasGame is
         __ReentrancyGuard_init();
 
         _baseURIString = baseURI;
-        _tablePrefix = "canvas";
+        _tablePrefix = "NebulaNFT";
         _externalURL = externalURL;
     }
 
@@ -145,7 +145,7 @@ contract CanvasGame is
     }
 
 
-    function updateBattleround(uint256 tokenId, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) internal {
+    function updateBattleround(uint256 tokenId, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external {
         // Construct the setters to update other attributes
         string memory setters = string.concat(
             "health=", Strings.toString(health),
@@ -173,41 +173,6 @@ contract CanvasGame is
         );
     }
 
-    /*
-     * `makeMove` is an example of how to encode gameplay into both the
-     * smart contract and the metadata. Whenever a token owner calls
-     * make move, they can supply a new x,y coordinate and update
-     * their token's metadata.
-     */
-    function makeMove(uint256 tokenId, uint256 x, uint256 y) public {
-        // check token ownership
-        require(this.ownerOf(tokenId) == msg.sender, "Invalid owner");
-        // simple on-chain gameplay enforcement
-        require(x < 512 && 0 <= x, "Out of bounds");
-        require(y < 512 && 0 <= y, "Out of bounds");
-        // Update the row in tableland
-        string memory setters = string.concat(
-            "x=",
-            Strings.toString(x),
-            ",y=",
-            Strings.toString(y)
-        );
-        // Only update the row with the matching `id`
-        string memory filters = string.concat("id=", Strings.toString(tokenId));
-        // Update the table
-        TablelandDeployments.get().mutate(
-            address(this),
-            _metadataTableId,
-            SQLHelpers.toUpdate(
-                _tablePrefix,
-                _metadataTableId,
-                setters,
-                filters
-            )
-        );
-
-        emit MakeMove(msg.sender, tokenId, x, y);
-    }
 
     /*
      * `_baseURI` returns the base token URI.
@@ -221,53 +186,40 @@ contract CanvasGame is
      * erc721 compliant metadata JSON. here, we do a simple SELECT statement
      * with function that converts the result into json.
      */
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        require(
-            _exists(tokenId),
-            "ERC721URIStorage: URI query for nonexistent token"
-        );
-
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
+    
         string memory base = _baseURI();
-
-        /**
-            SELECT
-                json_object(
-                    'name', 'Token #' || id,
-                    'external_url', '<externalURL>',
-                    'attributes',
-                    json_array(
-                    json_object(
-                        'display_type', 'number',
-                        'trait_type', 'x',
-                        'value', x
-                    ),
-                    json_object(
-                        'display_type', 'number',
-                        'trait_type', 'y',
-                        'value', y
-                    )
-                    )
-                )
-            FROM
-            <prefix_chainId_tableId>
-            WHERE
-            id = <tokenId>
-         */
-        return
-            string.concat(
-                base,
-                "query?unwrap=true&extract=true&statement=", // Set up an unwrap + extract for a single token
-                "SELECT%20json_object%28%27name%27%2C%20%27Token%20%23%27%20%7C%7C%20id%2C%20%27external_url%27%2C%20",
-                SQLHelpers.quote(_externalURL),
-                "%2C%20%27attributes%27%2Cjson_array%28json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27x%27%2C%20%27value%27%2C%20x%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27y%27%2C%20%27value%27%2C%20y%29%29%29%20FROM%20",
-                _metadataTable,
-                "%20WHERE%20id=",
-                Strings.toString(tokenId)
-            );
+    
+        // Construct the SQL query to fetch metadata for the specified tokenId
+        string memory sqlQuery = string(abi.encodePacked(
+            "SELECT json_object(",
+                "'name', name, ",
+                "'owner', owner, ",
+                "'price', price, ",
+                "'health', health, ",
+                "'strength', strength, ",
+                "'attack', attack, ",
+                "'speed', speed, ",
+                "'superPower', superPower, ",
+                "'totalWins', totalWins, ",
+                "'totalLoss', totalLoss",
+            ")",
+            " FROM ",
+            _metadataTable,
+            " WHERE id = ",
+            Strings.toString(tokenId)
+        ));
+    
+        // Construct the complete URL with the SQL query
+        return string(abi.encodePacked(
+            base,
+            "query?unwrap=true&extract=true&statement=",
+            SQLHelpers.quote(sqlQuery)
+        ));
     }
 
+    
     /*
      * `setExternalURL` provides an example of how to update a field for every
      * row in an table.
