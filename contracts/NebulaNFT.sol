@@ -62,6 +62,7 @@ contract NebulaNFT is
             /*
              *  CREATE TABLE prefix_chainId (
              *  text name, 
+             *  text cid,
              *  int health, 
              *  int strength, 
              *  int attack, 
@@ -186,27 +187,30 @@ contract NebulaNFT is
      * erc721 compliant metadata JSON. here, we do a simple SELECT statement
      * with function that converts the result into json.
      */
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+
+     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
     
         string memory base = _baseURI();
     
-        // Construct the SQL query to fetch all metadata fields from the metadata table based on tokenId
-        string memory tokenUri = string(
-            abi.encodePacked(
-                base,
-                "query?unwrap=true&extract=true&statement=",
-                "SELECT%20json_object%28%27id%27%2C%20id%2C%20%27name%27%2C%20name%2C%20%27owner%27%2C%20owner%2C%20%27price%27%2C%20price%2C%20%27health%27%2C%20health%2C%20%27strength%27%2C%20strength%2C%20%27attack%27%2C%20attack%2C%20%27speed%27%2C%20speed%2C%20%27superPower%27%2C%20superPower%2C%20%27totalWins%27%2C%20totalWins%2C%20%27totalLoss%27%2C%20totalLoss%29%20FROM%20",
-                _metadataTable,
-                "%20WHERE%20id=",
-                Strings.toString(tokenId)
-            )
+        return string.concat(
+            base,
+            "query?unwrap=true&extract=true&statement=",
+            "SELECT%20json_object%28%27name%27%2C%20name%20%7C%7C%20%27%20%23%27%20%7C%7C%20id%2C%20", // Name as name_id
+            "%27image%27%2C%20", SQLHelpers.quote(_externalURL), "%2C%20%27attributes%27%2Cjson_array%28", // Rename external_url to image
+            "json_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27owner%27%2C%20%27value%27%2C%20owner%29%2C", // Include owner in attributes
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27id%27%2C%20%27value%27%2C%20", Strings.toString(tokenId), "%29%2C", // Include id in attributes
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27health%27%2C%20%27value%27%2C%20health%29%2C",
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27strength%27%2C%20%27value%27%2C%20strength%29%2C",
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27attack%27%2C%20%27value%27%2C%20attack%29%2C",
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27speed%27%2C%20%27value%27%2C%20speed%29%2C",
+            "json_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27superPower%27%2C%20%27value%27%2C%20superPower%29%2C",
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalWins%27%2C%20%27value%27%2C%20totalWins%29%2C",
+            "json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalLoss%27%2C%20%27value%27%2C%20totalLoss%29",
+            "%29%29%20FROM%20", _metadataTable, "%20WHERE%20id=", Strings.toString(tokenId)
         );
-    
-        return tokenUri;
     }
-
-
+     
     /*
      * `setExternalURL` provides an example of how to update a field for every
      * row in an table.

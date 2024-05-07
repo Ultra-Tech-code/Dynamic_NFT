@@ -6,45 +6,44 @@ import {
 } from "@tableland/evm/network";
 
 async function main() {
-  // Get the Tableland registry address for the current network
-  // const registryAddress =
-  //   network.name === "localhost"
-  //     ? proxies["local-tableland" as keyof TablelandNetworkConfig]
-  //     : proxies[network.name as keyof TablelandNetworkConfig];
+  //Get the Tableland registry address for the current network
+  const registryAddress =
+    network.name === "localhost"
+      ? proxies["local-tableland" as keyof TablelandNetworkConfig]
+      : proxies[network.name as keyof TablelandNetworkConfig];
 
-  // // Get the baseURI with only the endpoint `/api/v1/` instead of an appended `/tables`
-  // let baseURI =
-  //   network.name === "localhost"
-  //     ? baseURIs["local-tableland" as keyof TablelandNetworkConfig]
-  //     : baseURIs[network.name as keyof TablelandNetworkConfig];
-  // baseURI = baseURI.match(/^https?:\/\/[^\/]+\/[^\/]+\/[^\/]+\/?/)![0];
+  // Get the baseURI with only the endpoint `/api/v1/` instead of an appended `/tables`
+  let baseURI =
+    network.name === "localhost"
+      ? baseURIs["local-tableland" as keyof TablelandNetworkConfig]
+      : baseURIs[network.name as keyof TablelandNetworkConfig];
+  baseURI = baseURI.match(/^https?:\/\/[^\/]+\/[^\/]+\/[^\/]+\/?/)![0];
 
 
-  // if (!registryAddress)
-  //   throw new Error("cannot get registry address for " + network.name);
-  // if (!baseURI) throw new Error("cannot get base URI for " + network.name);
+  if (!registryAddress)
+    throw new Error("cannot get registry address for " + network.name);
+  if (!baseURI) throw new Error("cannot get base URI for " + network.name);
 
 
   // Deploy the Canvas contract.
-  // const NebulaNFT = await ethers.getContractFactory("NebulaNFT");
-  // const nebulaNFT = await upgrades.deployProxy(
-  //   NebulaNFT,
-  //   [baseURI, "not.implemented.com"],
-  //   {
-  //     kind: "uups",
-  //   }
-  // );
-  // await nebulaNFT.deployed();
+  const NebulaNFT = await ethers.getContractFactory("NebulaNFT");
+  const nebulaNFT = await upgrades.deployProxy(
+    NebulaNFT,
+    [baseURI, "https://gateway.pinata.cloud/ipfs/QmNQ7dBaUjKTpJtF72fEoFNMDJWPyBWmyctwGPWoonwPop"],
+    {
+      kind: "uups",
+    }
+  );
+  await nebulaNFT.deployed();
 
   // Check upgradeability.
-  // console.log("Proxy deployed to:", nebulaNFT.address, "on", network.name);
-  // const impl = await upgrades.erc1967.getImplementationAddress(
-  //   nebulaNFT.address
-  // );
-  // console.log("^Add this to your 'hardhat.config.ts' file's 'deployments'");
-  // console.log("New implementation address:", impl);
+  console.log("Proxy deployed to:", nebulaNFT.address, "on", network.name);
+  const impl = await upgrades.erc1967.getImplementationAddress(
+    nebulaNFT.address
+  );
+  console.log("^Add this to your 'hardhat.config.ts' file's 'deployments'");
+  console.log("New implementation address:", impl);
 
-const nebulaNFT = await ethers.getContractAt("NebulaNFT", "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707");
 
   const metadatauri = await nebulaNFT.metadataURI()
   console.log("metadatauri", metadatauri)
@@ -54,15 +53,15 @@ const nebulaNFT = await ethers.getContractAt("NebulaNFT", "0x5FC8d32690cc91D4c39
   console.log("\nRunning post deploy...");
 
   // Create our metadata table
-  // let tx = await nebulaNFT.createMetadataTable();
-  // let receipt = await tx.wait();
-  // const tableId = receipt.events[0].args.tokenId;
-  // console.log("Metadata table ID:", tableId.toString());
+  let tx = await nebulaNFT.createMetadataTable();
+  let receipt = await tx.wait();
+  const tableId = receipt.events[0].args.tokenId;
+  console.log("Metadata table ID:", tableId.toString());
 
   // For fun—test minting and making a move.
   const accounts = await ethers.getSigners();
-  let tx = await nebulaNFT.connect(accounts[1]).safeMint(accounts[1].address);
- let  receipt = await tx.wait();
+  tx = await nebulaNFT.connect(accounts[1]).safeMint(accounts[1].address);
+  receipt = await tx.wait();
   const [, transferEvent] = (await receipt.events) ?? [];
   const tokenId = await transferEvent.args!.tokenId;
   console.log("Token ID:", ethers.BigNumber.from(tokenId).toNumber());
