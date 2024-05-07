@@ -191,35 +191,22 @@ contract NebulaNFT is
     
         string memory base = _baseURI();
     
-        // Construct the SQL query to fetch metadata for the specified tokenId
-        string memory sqlQuery = string(abi.encodePacked(
-            "SELECT json_object(",
-                "'name', name, ",
-                "'owner', owner, ",
-                "'price', price, ",
-                "'health', health, ",
-                "'strength', strength, ",
-                "'attack', attack, ",
-                "'speed', speed, ",
-                "'superPower', superPower, ",
-                "'totalWins', totalWins, ",
-                "'totalLoss', totalLoss",
-            ")",
-            " FROM ",
-            _metadataTable,
-            " WHERE id = ",
-            Strings.toString(tokenId)
-        ));
+        // Construct the SQL query to fetch all metadata fields from the metadata table based on tokenId
+        string memory tokenUri = string(
+            abi.encodePacked(
+                base,
+                "query?unwrap=true&extract=true&statement=",
+                "SELECT%20json_object%28%27id%27%2C%20id%2C%20%27name%27%2C%20name%2C%20%27owner%27%2C%20owner%2C%20%27price%27%2C%20price%2C%20%27health%27%2C%20health%2C%20%27strength%27%2C%20strength%2C%20%27attack%27%2C%20attack%2C%20%27speed%27%2C%20speed%2C%20%27superPower%27%2C%20superPower%2C%20%27totalWins%27%2C%20totalWins%2C%20%27totalLoss%27%2C%20totalLoss%29%20FROM%20",
+                _metadataTable,
+                "%20WHERE%20id=",
+                Strings.toString(tokenId)
+            )
+        );
     
-        // Construct the complete URL with the SQL query
-        return string(abi.encodePacked(
-            base,
-            "query?unwrap=true&extract=true&statement=",
-            SQLHelpers.quote(sqlQuery)
-        ));
+        return tokenUri;
     }
 
-    
+
     /*
      * `setExternalURL` provides an example of how to update a field for every
      * row in an table.
