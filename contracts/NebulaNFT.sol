@@ -90,28 +90,22 @@ contract NebulaNFT is
      */
 
     //  Godzilla = new Character("Godzilla", 80, 8, 15, 10, "Thunderbolt", 270);
-    function safeMint(address to, uint256 _tokenid,  string memory setters) internal returns (uint256) {
-        // Insert table values upon minting.
-        TablelandDeployments.get().mutate(
-            address(this),
+    function safeMint(address to, uint256 _tokenid, string memory setters) internal returns (uint256) {
+    // Insert table values upon minting.
+    TablelandDeployments.get().mutate(
+        address(this),
+        _metadataTableId,
+        SQLHelpers.toInsert(
+            _tablePrefix,
             _metadataTableId,
-            SQLHelpers.toInsert(
-                _tablePrefix,
-                _metadataTableId,
-                "id, name, owner, price, health, strength, attack, speed, superPower, totalWins, totalLoss",
-                string.concat(
-                Strings.toString(newItemId),
-                ",'Godzilla','",
-                Strings.toHexString(to),
-                "',20,80,8,15,10,'Thunderbolt',0,0"
-                )
-            )
-        );
-        _safeMint(to, _tokenid);
-        _tokenIds.increment();
-        return newItemId;
+            "id, name, owner, price, health, strength, attack, speed, superPower, totalWins, totalLoss",
+            setters
+        )
+    );
+    _safeMint(to, _tokenid);
+    _tokenIds.increment();
+    return _tokenid;
     }
-
     function updateBattleround(uint256 tokenId, string memory setters) internal {
         // Only update the row with the matching `id`
         string memory filters = string.concat("id=", Strings.toString(tokenId));
@@ -134,20 +128,20 @@ contract NebulaNFT is
 
         if(!_exists(_tokenid)) {
             string memory setters = string.concat(
-                "health=", Strings.toString(health),
-                "id=", Strings.toString(_tokenid), 
-                "name=", ",'Godzilla','",
-                "owner", Strings.toHexString(to),
-                ",strength=", Strings.toString(strength),
-                ",attack=", Strings.toString(attack),
-                ",speed=", Strings.toString(speed),
-                ",superPower='", superPower, "'",
-                ",totalWins=", Strings.toString(totalWins),
-                ",totalLoss=", Strings.toString(totalLoss)
+                Strings.toString(_tokenid),
+                ",'Godzilla','",
+                Strings.toHexString(to),
+                "',20,",
+                Strings.toString(health), ",",
+                Strings.toString(strength), ",",
+                Strings.toString(attack), ",",
+                Strings.toString(speed), ",'",
+                superPower, "',",
+                Strings.toString(totalWins), ",",
+                Strings.toString(totalLoss)
             );
             safeMint(to, _tokenid, setters);
-        }else{
-
+        } else {
             // Construct the setters to update other attributes
             string memory setters = string.concat(
                 "health=", Strings.toString(health),
@@ -158,8 +152,7 @@ contract NebulaNFT is
                 ",totalWins=", Strings.toString(totalWins),
                 ",totalLoss=", Strings.toString(totalLoss)
             );
-
-            updateBattleround( _tokenid, setters);
+            updateBattleround(_tokenid, setters);
         }
     }
 
