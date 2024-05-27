@@ -27,11 +27,8 @@ contract NebulaNFT is
     string private _metadataTable;
     uint256 private _metadataTableId;
     string private _tablePrefix;
-    // In a separate tutorial, we update this with a Nuxt app that displays x,y
-    // and gives you the interface to move x,y.
     string private _externalURL;
-
-    event MakeMove(address caller, uint256 tokenId, uint256 x, uint256 y);
+    address public dappAddress;
 
     function initialize(
         string memory baseURI,
@@ -93,9 +90,7 @@ contract NebulaNFT is
      */
 
     //  Godzilla = new Character("Godzilla", 80, 8, 15, 10, "Thunderbolt", 270);
-
-    function safeMint(address to) public returns (uint256) {
-        uint256 newItemId = _tokenIds.current();
+    function safeMint(address to, uint256 _tokenid,  string memory setters) internal returns (uint256) {
         // Insert table values upon minting.
         TablelandDeployments.get().mutate(
             address(this),
@@ -112,27 +107,16 @@ contract NebulaNFT is
                 )
             )
         );
-        _safeMint(to, newItemId);
+        _safeMint(to, _tokenid);
         _tokenIds.increment();
         return newItemId;
     }
 
-
-      /*
-     * `_transfer` update the transfer function so that.
-     * when called the owner is updated in the metadata table.
-     * This is a simple example of how to update a row in the table
-     */
-
-
-    function _transfer(address from, address to, uint256 tokenId) internal override {
-        // Call parent _transfer function to perform the transfer
-        super._transfer(from, to, tokenId);
-
-        string memory setters = string.concat("owner='", Strings.toHexString(to), "'");
+    function updateBattleround(uint256 tokenId, string memory setters) internal {
+        // Only update the row with the matching `id`
         string memory filters = string.concat("id=", Strings.toString(tokenId));
-
-        // Update owner in the SQL table
+        
+        // Update the table
         TablelandDeployments.get().mutate(
             address(this),
             _metadataTableId,
@@ -145,23 +129,57 @@ contract NebulaNFT is
         );
     }
 
+    function entrypoint(address to, uint256 _tokenid, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external {
+        require(msg.sender == dappAddress, "Only Dapp can call this function");
 
-    function updateBattleround(uint256 tokenId, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external {
-        // Construct the setters to update other attributes
-        string memory setters = string.concat(
-            "health=", Strings.toString(health),
-            ",strength=", Strings.toString(strength),
-            ",attack=", Strings.toString(attack),
-            ",speed=", Strings.toString(speed),
-            ",superPower='", superPower, "'",
-            ",totalWins=", Strings.toString(totalWins),
-            ",totalLoss=", Strings.toString(totalLoss)
-        );
-    
-        // Only update the row with the matching `id`
+        if(!_exists(_tokenid)) {
+            string memory setters = string.concat(
+                "health=", Strings.toString(health),
+                "id=", Strings.toString(_tokenid), 
+                "name=", ",'Godzilla','",
+                "owner", Strings.toHexString(to),
+                ",strength=", Strings.toString(strength),
+                ",attack=", Strings.toString(attack),
+                ",speed=", Strings.toString(speed),
+                ",superPower='", superPower, "'",
+                ",totalWins=", Strings.toString(totalWins),
+                ",totalLoss=", Strings.toString(totalLoss)
+            );
+            safeMint(to, _tokenid, setters);
+        }else{
+
+            // Construct the setters to update other attributes
+            string memory setters = string.concat(
+                "health=", Strings.toString(health),
+                ",strength=", Strings.toString(strength),
+                ",attack=", Strings.toString(attack),
+                ",speed=", Strings.toString(speed),
+                ",superPower='", superPower, "'",
+                ",totalWins=", Strings.toString(totalWins),
+                ",totalLoss=", Strings.toString(totalLoss)
+            );
+
+            updateBattleround( _tokenid, setters);
+        }
+    }
+
+    function setDappAddress(address _dappAddress) external onlyOwner {
+        dappAddress = _dappAddress;
+    }
+
+      /*
+     * `_transfer` update the transfer function so that.
+     * when called the owner is updated in the metadata table.
+     * This is a simple example of how to update a row in the table
+     */
+    function _transfer(address from, address to, uint256 tokenId) internal override {
+        // Call parent _transfer function to perform the transfer
+        super._transfer(from, to, tokenId);
+
+        string memory setters = string.concat("owner='", Strings.toHexString(to), "'");
         string memory filters = string.concat("id=", Strings.toString(tokenId));
-        
-        // Update the table
+
+        // Update owner in the SQL table
         TablelandDeployments.get().mutate(
             address(this),
             _metadataTableId,
