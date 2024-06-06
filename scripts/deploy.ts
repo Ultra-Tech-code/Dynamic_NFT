@@ -6,6 +6,9 @@ import {
 } from "@tableland/evm/network";
 
 async function main() {
+  const accounts = await ethers.getSigners();
+
+
   //Get the Tableland registry address for the current network
   const registryAddress =
     network.name === "localhost"
@@ -44,27 +47,45 @@ async function main() {
   console.log("^Add this to your 'hardhat.config.ts' file's 'deployments'");
   console.log("New implementation address:", impl);
 
-
-  const metadatauri = await nebulaNFT.metadataURI()
-  console.log("metadatauri", metadatauri)
-
-
   // Run post deploy table creation.
   console.log("\nRunning post deploy...");
 
+  //get the metadata uri
+  const metadatauri = await nebulaNFT.metadataURI()
+  console.log("metadatauri", metadatauri)
+
+  //get the owner
+  let owner = await nebulaNFT.owner()
+  console.log("owner", owner)
+
+  //mimmicking the dapp address ownership transfered
+  let transferOwnership = await nebulaNFT.connect(accounts[0]).transferOwnership(accounts[1].address)
+  await transferOwnership.wait();
+
+
+  //get the owner again
+  let newowner = await nebulaNFT.owner()
+  console.log("new owner", newowner)
+
+
   // Create our metadata table
-  let tx = await nebulaNFT.createMetadataTable();
+  let tx = await nebulaNFT.connect(accounts[1]).createMetadataTable();
   let receipt = await tx.wait();
-  const tableId = receipt.events[0].args.tokenId;
+
+  const tableId = receipt.events[0].args[2];
   console.log("Metadata table ID:", tableId.toString());
 
   // For fun—test minting and making a move.
-  const accounts = await ethers.getSigners();
-  tx = await nebulaNFT.connect(accounts[1]).safeMint(accounts[1].address);
-  receipt = await tx.wait();
-  const [, transferEvent] = (await receipt.events) ?? [];
-  const tokenId = await transferEvent.args!.tokenId;
-  console.log("Token ID:", ethers.BigNumber.from(tokenId).toNumber());
+  // await nebulaNFT.connect(accounts[1]).safeMint(accounts[1].address);
+  // receipt = await tx.wait();
+  // const [, transferEvent] = (await receipt.events) ?? [];
+  // const tokenId = await transferEvent.args!.tokenId;
+  // console.log("Token ID:", ethers.BigNumber.from(tokenId).toNumber());
+  let tokenId = 1;
+
+  //first time. the nft is minted here
+  await nebulaNFT.connect(accounts[1]).entrypoint(accounts[1].address, tokenId, 80, 4,9,12, "Thunderbolt", 0, 1);
+  await tx.wait();
 
 
   const totalSupply = await nebulaNFT.totalSupply()
@@ -76,8 +97,8 @@ async function main() {
   console.log(`And the specific token's URI:`);
   console.log(tokenURI);
 
-
-  await nebulaNFT.connect(accounts[1]).updateBattleround(ethers.BigNumber.from(tokenId).toNumber(), 80, 4,9,12, "Thunderbolt", 0, 1); // (tokenId, x, y)
+  //the nft is updated cos the tokenid has been minted already
+  await nebulaNFT.connect(accounts[1]).entrypoint(accounts[1].address, tokenId, 60, 2,12,10, "Thunderbolt", 3, 1); // (tokenId, x, y)
    await tx.wait();
 
 
@@ -96,6 +117,18 @@ console.log(tokenURI_res);
   const gateway = await nebulaNFT.metadataURI();
   console.log(`\nCheck out the mutated table data:`);
   console.log(gateway);
+
+  // Query all table values after mutating.
+const transfer = await nebulaNFT.connect(accounts[1]).transferFrom(accounts[1].address, accounts[3].address, tokenId);
+console.log(`\nTransferinnggggg`);
+await transfer.wait()
+
+
+// Query all table values after mutating.
+const uri = await nebulaNFT.metadataURI();
+console.log(`\nCheck out the mutated table data:`);
+console.log(uri);
+
 
 }
 

@@ -28,7 +28,6 @@ contract NebulaNFT is
     uint256 private _metadataTableId;
     string private _tablePrefix;
     string private _externalURL;
-    address public dappAddress;
 
     function initialize(
         string memory baseURI,
@@ -123,8 +122,7 @@ contract NebulaNFT is
         );
     }
 
-    function entrypoint(address to, uint256 _tokenid, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external {
-        require(msg.sender == dappAddress, "Only Dapp can call this function");
+    function entrypoint(address to, uint256 _tokenid, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external onlyOwner {
 
         if(!_exists(_tokenid)) {
             string memory setters = string.concat(
@@ -154,10 +152,6 @@ contract NebulaNFT is
             );
             updateBattleround(_tokenid, setters);
         }
-    }
-
-    function setDappAddress(address _dappAddress) external onlyOwner {
-        dappAddress = _dappAddress;
     }
 
       /*
