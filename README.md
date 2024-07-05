@@ -139,3 +139,30 @@ This spins up a Tableland and Hardhat node temporarily, so be sure to close out 
 ### Example output
 
 The following contract was deployed on Polygon Mumbai: [`0xEB5865EF3949585324c465eC9ba5C7777f455488`](https://mumbai.polygonscan.com/address/0xEB5865EF3949585324c465eC9ba5C7777f455488#writeProxyContract). An ERC721 example query for token `0` can be viewed [here](https://testnets.tableland.network/api/v1/query?unwrap=true&extract=true&statement=SELECT%20json_object%28%27name%27%2C%20%27Token%20%23%27%20%7C%7C%20id%2C%20%27external_url%27%2C%20'not.implemented.com'%2C%20%27attributes%27%2Cjson_array%28json_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27x%27%2C%20%27value%27%2C%20x%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27y%27%2C%20%27value%27%2C%20y%29%29%29%20FROM%20canvas_80001_6076%20WHERE%20id=0).
+
+
+
+
+
+
+
+
+
+
+
+
+///////////-----------------///////////
+ npx hardhat run scripts/newdeploy.ts --network base-sepolia --show-stack-traces
+No need to generate any newer typings.
+Nebula 1.0 deployed to: 0x25d3195984A693886103312eA3FA53D738c951B7
+Proxy deployed to: 0x951fAa8B5E040DdC3f0489D00CF1E66be2355b25
+/////////////----------------interacting----------------------///////////
+Contract name: NebulaNFT
+Contract owner: 0x12896191de42EF8388f2892Ab76b9a728189260A
+Metadata table ID: 42
+metadatauri https://testnets.tableland.network/api/v1/query?statement=SELECT%20*%20FROM%20NebulaNFT_84532_42
+totalSupply BigNumber { value: "1" }
+And the specific token's URI:
+https://testnets.tableland.network/api/v1/query?unwrap=true&extract=true&statement=SELECT%20json_object%28%27name%27%2C%20name%20%7C%7C%20%27%20%23%27%20%7C%7C%20id%2C%20%27image%27%2C%20image%2C%20%27attributes%27%2Cjson_array%28json_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27owner%27%2C%20%27value%27%2C%20owner%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27id%27%2C%20%27value%27%2C%201%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27price%27%2C%20%27value%27%2C%20price%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27health%27%2C%20%27value%27%2C%20health%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27strength%27%2C%20%27value%27%2C%20strength%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27attack%27%2C%20%27value%27%2C%20attack%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27speed%27%2C%20%27value%27%2C%20speed%29%2Cjson_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27superPower%27%2C%20%27value%27%2C%20superPower%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalWins%27%2C%20%27value%27%2C%20totalWins%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalLoss%27%2C%20%27value%27%2C%20totalLoss%29%29%29%20FROM%20NebulaNFT_84532_42%20WHERE%20id=1
+
+

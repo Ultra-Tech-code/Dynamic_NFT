@@ -24,15 +24,38 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // Used for contract verification & post-deploy moves
 export const deployments: { [key: string]: string } = {
-  localhost: "0x5FbDB2315678afecb367f032d93F642f64180aa3", // If it's the first deployed contract, this is deterministic
-  maticmum: "0xEB5865EF3949585324c465eC9ba5C7777f455488", // Update this with your proxy contract deployment
+  localhost: "0x25d3195984A693886103312eA3FA53D738c951B7", // If it's the first deployed contract, this is deterministic
+  "base-sepolia": "0x951fAa8B5E040DdC3f0489D00CF1E66be2355b25", // Update this with your proxy contract deployment
   // And/or, add a different network key
 };
+
+
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 const config: HardhatUserConfig = {
-  solidity: "0.8.12",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.20",
+      },
+      {
+        version: "0.8.12",
+      },
+      {
+        version: "0.8.10",
+      },
+      {
+        version: "0.8.2",
+      },
+      {
+        version: "0.8.1",
+      },
+      {
+        version: "0.8.0",
+      },
+    ],
+  },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
@@ -41,19 +64,22 @@ const config: HardhatUserConfig = {
     silent: false,
     verbose: false,
   },
-  etherscan: {
-    apiKey: {
-      // ethereum
-      mainnet: process.env.ETHERSCAN_API_KEY || "",
-      sepolia: process.env.ETHERSCAN_API_KEY || "",
-      // optimism
-      optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
-      optimisticKovan: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
-      // polygon
-      polygon: process.env.POLYGONSCAN_API_KEY || "",
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
-    },
-  },
+  // etherscan: {
+  //   apiKey: {
+  //     // ethereum
+  //     mainnet: process.env.ETHERSCAN_API_KEY || "",
+  //     sepolia: process.env.ETHERSCAN_API_KEY || "",
+  //     // optimism
+  //     optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+  //     optimisticKovan: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+  //     // polygon
+  //     polygon: process.env.POLYGONSCAN_API_KEY || "",
+  //     polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
+  //     //base
+  //     // base: process.env.BASE_SEPOLIA_API_KEY || "",
+  //     "base-sepolia": process.env.BASE_SEPOLIA_API_KEY,
+  //   },
+  // },
   networks: {
     // mainnets
     ethereum: {
@@ -111,6 +137,16 @@ const config: HardhatUserConfig = {
           ? [process.env.POLYGON_MUMBAI_PRIVATE_KEY]
           : [],
     },
+    "base-sepolia": {
+      url: `https://base-sepolia.g.alchemy.com/v2/${
+        process.env.BASE_SEPOLIA_API_KEY ?? ""
+      }`,
+      accounts:
+        process.env.BASE_SEPOLIA_PRIVATE_KEY !== undefined
+          ? [process.env.BASE_SEPOLIA_PRIVATE_KEY]
+          : [],
+    },
+
     hardhat: {
       mining: {
         auto: !(process.env.HARDHAT_DISABLE_AUTO_MINING === "true"),
@@ -118,6 +154,26 @@ const config: HardhatUserConfig = {
       },
     },
   },
+
+  etherscan: {
+    apiKey: {
+      "base-sepolia": process.env.BASESCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "base-sepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org"
+        }
+      }
+    ]
+  },
+
+
+
+
   proxies: {
     localhost: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   },
