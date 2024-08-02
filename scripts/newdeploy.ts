@@ -96,8 +96,6 @@ async function main() {
   console.log(tokenURI);
 
 
-
-
 }
 
 main().catch((error) => {

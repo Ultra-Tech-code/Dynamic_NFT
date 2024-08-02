@@ -14,11 +14,13 @@ import "@tableland/evm/contracts/utils/SQLHelpers.sol";
 contract NebulaNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
 
         uint256 private _tokenIds;
+        uint256 private _metadataTableId;
+        address public dappAddress;
         string private _baseURIString;
         string private _tablePrefix;
-        uint256 private _metadataTableId;
         string private _metadataTable;
-        mapping(uint256 => bool) private _exists;
+        mapping(uint256 => bool) public _exists;
+
 
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -41,7 +43,7 @@ contract NebulaNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradea
      * `createMetadataTable` initializes the token tables.
      */
     function createMetadataTable()
-        external
+        public
         payable
         onlyOwner
         returns (uint256)
@@ -127,7 +129,10 @@ contract NebulaNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradea
 
 
 
-     function entrypoint(address to, uint256 _tokenid, string memory _name, string memory _image, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) external onlyOwner {
+     function entrypoint(address to, uint256 _tokenid, string memory _name, string memory _image, uint256 health, uint256 strength, uint256 attack, uint256 speed, string memory superPower, uint256 totalWins, uint256 totalLoss) public  {
+        require(to != address(0), "Invalid address");
+        require(msg.sender == dappAddress || msg.sender == owner(), "Invalid caller");
+        
         if (!_exists[_tokenid]) {
             string memory setters = string.concat(
                 Strings.toString(_tokenid), ",'",
@@ -248,34 +253,39 @@ contract NebulaNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradea
      * @param tokenId The ID of the token
      * @param newPrice The new price to set
      */
-    function setPrice(uint256 tokenId, uint256 newPrice, address sender) external onlyOwner {
-        require(_exists[tokenId], "ERC721: set price for nonexistent token");
-        require(sender == ownerOf(tokenId), "ERC721: Not Owner");
+    // function setPrice(uint256 tokenId, uint256 newPrice, address sender) public onlyOwner {
+    //     require(_exists[tokenId], "ERC721: nonexistent token");
+    //     require(sender == ownerOf(tokenId), "ERC721: Not Owner");
 
-        string memory setters = string.concat("price=", Strings.toString(newPrice));
-        string memory filters = string.concat("id=", Strings.toString(tokenId));
+    //     string memory setters = string.concat("price=", Strings.toString(newPrice));
+    //     string memory filters = string.concat("id=", Strings.toString(tokenId));
 
-        // Update price in the SQL table
-        TablelandDeployments.get().mutate(
-            address(this),
-            _metadataTableId,
-            SQLHelpers.toUpdate(
-                _tablePrefix,
-                _metadataTableId,
-                setters,
-                filters
-            )
-        );
+    //     // Update price in the SQL table
+    //     TablelandDeployments.get().mutate(
+    //         address(this),
+    //         _metadataTableId,
+    //         SQLHelpers.toUpdate(
+    //             _tablePrefix,
+    //             _metadataTableId,
+    //             setters,
+    //             filters
+    //         )
+    //     );
+    // }
+
+    function setDappAddress(address _dappAddress) public onlyOwner {
+        require(_dappAddress != address(0), "Invalid address");
+        dappAddress = _dappAddress;
     }
 
     /**
      * `totalSupply` simply returns the total number of tokens.
      */
-    function totalSupply() external view returns (uint256) {
+    function totalSupply() public view returns (uint256) {
         return _tokenIds;
     }
 
-    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) public pure returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }
 
