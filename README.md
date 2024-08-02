@@ -101,7 +101,7 @@ npx hardhat node --network local-tableland
 Then, you can run the deploy script—**be sure to update the `deployments`** variable in `hardhat.config.ts` with the value logged in the script:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network localhost
+npx hardhat run scripts/newdeploy.ts --network localhost
 ```
 
 That is, update this with your data:
@@ -109,14 +109,14 @@ That is, update this with your data:
 ```js
 export const deployments: { [key: string]: string } = {
   localhost: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707", // If it's the first deployed contract, this is deterministic
-  maticmum: "", // Update this with your proxy contract deployment
+  base-sepolia: "0xd0071F2343E9Ea8993356DD491588C3B1329d131", // Update this with your proxy contract deployment
   // And/or, add a different network key
 };
 ```
 
 The following scripts are also available:
 
-- `move.ts`: Move your owned pixel NFT's `x` and `y` coordinates.
+- `move.ts`: extensive test of all the functions.
 - `upgrade.ts`: Upgrade your contract upon code changes.
 - `verify.ts`: Verify the contract on live networks.
 
@@ -154,13 +154,13 @@ The following contract was deployed on Polygon Mumbai: [`0xEB5865EF3949585324c46
 ///////////-----------------///////////
  npx hardhat run scripts/newdeploy.ts --network base-sepolia --show-stack-traces
 No need to generate any newer typings.
-Nebula 1.0 deployed to: 0x25d3195984A693886103312eA3FA53D738c951B7
-Proxy deployed to: 0x951fAa8B5E040DdC3f0489D00CF1E66be2355b25
+Nebula 1.0 deployed to: 0xEe36fAD43D7C3bF5Dc95cE3AfAA257e33531a814
+Proxy deployed to: 0xd0071F2343E9Ea8993356DD491588C3B1329d131
 /////////////----------------interacting----------------------///////////
 Contract name: NebulaNFT
 Contract owner: 0x12896191de42EF8388f2892Ab76b9a728189260A
-Metadata table ID: 42
-metadatauri https://testnets.tableland.network/api/v1/query?statement=SELECT%20*%20FROM%20NebulaNFT_84532_42
+Metadata table ID: 52
+metadatauri https://testnets.tableland.network/api/v1/query?statement=SELECT%20*%20FROM%20NebulaNFT_84532_52
 totalSupply BigNumber { value: "1" }
 And the specific token's URI:
-https://testnets.tableland.network/api/v1/query?unwrap=true&extract=true&statement=SELECT%20json_object%28%27name%27%2C%20name%20%7C%7C%20%27%20%23%27%20%7C%7C%20id%2C%20%27image%27%2C%20image%2C%20%27attributes%27%2Cjson_array%28json_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27owner%27%2C%20%27value%27%2C%20owner%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27id%27%2C%20%27value%27%2C%201%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27price%27%2C%20%27value%27%2C%20price%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27health%27%2C%20%27value%27%2C%20health%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27strength%27%2C%20%27value%27%2C%20strength%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27attack%27%2C%20%27value%27%2C%20attack%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27speed%27%2C%20%27value%27%2C%20speed%29%2Cjson_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27superPower%27%2C%20%27value%27%2C%20superPower%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalWins%27%2C%20%27value%27%2C%20totalWins%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalLoss%27%2C%20%27value%27%2C%20totalLoss%29%29%29%20FROM%20NebulaNFT_84532_42%20WHERE%20id=1
+https://testnets.tableland.network/api/v1/query?unwrap=true&extract=true&statement=SELECT%20json_object%28%27name%27%2C%20name%20%7C%7C%20%27%20%23%27%20%7C%7C%20id%2C%20%27image%27%2C%20image%2C%20%27attributes%27%2Cjson_array%28json_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27owner%27%2C%20%27value%27%2C%20owner%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27id%27%2C%20%27value%27%2C%201%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27price%27%2C%20%27value%27%2C%20price%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27health%27%2C%20%27value%27%2C%20health%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27strength%27%2C%20%27value%27%2C%20strength%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27attack%27%2C%20%27value%27%2C%20attack%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27speed%27%2C%20%27value%27%2C%20speed%29%2Cjson_object%28%27display_type%27%2C%20%27text%27%2C%20%27trait_type%27%2C%20%27superPower%27%2C%20%27value%27%2C%20superPower%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalWins%27%2C%20%27value%27%2C%20totalWins%29%2Cjson_object%28%27display_type%27%2C%20%27number%27%2C%20%27trait_type%27%2C%20%27totalLoss%27%2C%20%27value%27%2C%20totalLoss%29%29%29%20FROM%20NebulaNFT_84532_52%20WHERE%20id=1
